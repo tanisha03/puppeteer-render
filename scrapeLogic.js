@@ -24,7 +24,10 @@ const scrapeLogic = async (res) => {
 
     const currentArticles = await page.evaluate((selectors) => {
       const results = [];
-      const articleElements = document.querySelectorAll(selectors.articleSelector);
+
+      console.log(document.title, '=====title');
+
+      const articleElements = document.querySelectorAll(selectors.headerSelector);
 
       articleElements.forEach((element) => {
         results.push(element.innerText);
