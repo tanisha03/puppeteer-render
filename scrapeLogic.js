@@ -22,24 +22,21 @@ const scrapeLogic = async (res) => {
     // Set screen size
     await page.setViewport({ width: 1080, height: 1024 });
 
-    // Type into search box
-    await page.type(".devsite-search-field devsite-search-query", "automate beyond recorder");
+    const currentArticles = await page.evaluate((selectors) => {
+      const results = [];
+      const articleElements = document.querySelectorAll(selectors.articleSelector);
 
-    // Wait and click on first result
-    const searchResultSelector = ".search-box__link";
-    await page.waitForSelector(searchResultSelector);
-    await page.click(searchResultSelector);
+      articleElements.forEach((element) => {
+        results.push(element.innerText);
+      });
 
-    // Locate the full title with a unique string
-    const textSelector = await page.waitForSelector(
-      "text/Customize and automate"
-    );
-    const fullTitle = await textSelector.evaluate((el) => el.textContent);
+      return results;
+    }, {
+      headerSelector: '#chromes-2024-recap-for-devs'
+    });
 
-    // Print the full title
-    const logStatement = `The title of this blog post is ${fullTitle}`;
-    console.log(logStatement);
-    res.send(logStatement);
+    console.log(currentArticles, '=====articles');
+    res.send(currentArticles);
   } catch (e) {
     console.error(e);
     res.send(`Something went wrong while running Puppeteer: ${e}`);
